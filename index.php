@@ -15,11 +15,6 @@ if(isset($_POST["search"])){
 
 $categories = getCategories();
 
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -83,60 +78,148 @@ $categories = getCategories();
 
 
 
-<div class = "rightSideMain">
-    <?php foreach($posts as $post):?>
+<div class="rightSideMain">
+    <?php foreach($posts as $post): ?>
         <div class="post">
             <label><?php echo $post["title"]; ?></label>
             <hr>
-            <Label><?php echo $post["content"]; ?></Label>
+            <label><?php echo $post["content"]; ?></label>
             <hr>
-            <div class="postSubsection">
-                <form method="POST" action = "">
-                    <input type="text" name="CommentsTriggerer" value='<?= $post["postID"] ?>' hidden>
-                    <button type="button" class="showCommentsBTN" postID="<?= $post["postID"] ?>" >Comments</button>
-                </form>
-                <div class="commentsSection" id="commentsSection<?= $post["postID"] ?>">
-                    <div class = "comment">
-                        <Label>Name : Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores vel quos tempora hic minus. Dolore blanditiis optio odit dolores numquam?</Label>
-                    </div>
-                </div>
 
-                <?php if($_SESSION["role"]== "admin"):?>
-                    <form method="POST" action = "editPost.php">
-                    <input type="text" name="selectedPostforEdit" value='<?= $post["postID"] ?>' hidden>
+            <div class="postSubsection">
+                <button type="button" class="showCommentsBTN" post-id="<?= $post["postID"] ?>">Comments</button>
+                <?php if($_SESSION["role"] == "admin"): ?>
+                    <form method="POST" action="editPost.php">
+                        <input type="text" name="selectedPostforEdit" value='<?= $post["postID"] ?>' hidden>
                         <button type="button" id="editPost">Edit</button>
                     </form>
-                    <form method="POST" action = "deletePost.php">
+                    <form method="POST" action="deletePost.php">
                         <input type="text" name="selectedPostforDelete" value='<?= $post["postID"] ?>' hidden>
                         <button type="button" id="deletePost">Delete</button>
                     </form>
-                <?php endif;?>
+                <?php endif; ?>
+            </div>
+            
+            <div class="postCommentsSection" id="postCommentsSection<?= $post["postID"] ?>" style="display: none;">
+                <div class="commentsSection" id="commentsSection<?= $post["postID"] ?>"></div>
+                <hr>
+                <div>
+                    <label for="addComentInput<?= $post["postID"] ?>">Comment:</label>
+                    <input type="text" id="addComentInput<?= $post["postID"] ?>">
+                    <button type="button" class="addComment" post-id="<?= $post["postID"] ?>">Add Comment</button>
+                </div>
             </div>
         </div>
     <?php endforeach; ?>
 </div>
+
+
 </div>
 
 </div>
 
 <script>
-    var btnComments = document.getElementsByClassName("showCommentsBTN");
-    Array.from(btnComments).forEach(function(button){
+document.querySelectorAll('.showCommentsBTN').forEach(button => {
+    button.addEventListener('click', function () {
+        const postId = this.getAttribute('post-id');
+        const postCommentsSection = document.getElementById('postCommentsSection' + postId);
+        const commentsSection = document.getElementById('commentsSection' + postId);
 
-            button.addEventListener('click', function() {
-             var postId = button.getAttribute('postID');
-            var commentsSection = document.getElementById('commentsSection' + postId);
+        // If the comments section is open, hide it
+        if (postCommentsSection.style.display === 'flex') {
+            postCommentsSection.style.display = 'none';
+            return; // Exit the function if the section is being hidden
+        }
 
-            // Toggle the visibility of the comments section
-            if (commentsSection.style.display === 'none' || commentsSection.style.display === '') {
-            commentsSection.style.display = 'block'; // Show the comments
-        } else {
-                commentsSection.style.display = 'none'; // Hide the comments
-            }   
-            });
+        commentsSection.innerHTML.trim() === ''
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'fetchComments.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                commentsSection.innerHTML = xhr.responseText;
+                // After loading comments, show the postCommentsSection
+                postCommentsSection.style.display = 'flex';
+            } else {
+                console.error('Error loading comments');
+            }
+        };
+        xhr.send('postID=' + postId);
+        postCommentsSection.style.display = 'flex';
+
+        // // If comments are not loaded yet, fetch them
+        // if (commentsSection.innerHTML.trim() === '') {
+        //     const xhr = new XMLHttpRequest();
+        //     xhr.open('POST', 'fetchComments.php', true);
+        //     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        //     xhr.onload = function () {
+        //         if (xhr.status === 200) {
+        //             commentsSection.innerHTML = xhr.responseText;
+        //             // After loading comments, show the postCommentsSection
+        //             postCommentsSection.style.display = 'flex';
+        //         } else {
+        //             console.error('Error loading comments');
+        //         }
+        //     };
+        //     xhr.send('postID=' + postId);
+        // } else {
+        //     // If comments are already loaded, just toggle the visibility
+        //     postCommentsSection.style.display = 'flex';
+        // }
     });
-    document.getElementById('showCommentsBTN')
+});
+
+
+document.querySelectorAll('.addComment').forEach(button => {
+    button.addEventListener('click', function () {
+        const postId = this.getAttribute('post-id');
+        const commentInput = document.getElementById('addComentInput' + postId);
+        const commentText = commentInput.value;
+
+        if (commentText === '') {
+            alert('Please enter a comment');
+            return;
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'addComment.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function () {
+            console.log(xhr.responseText); // Log the raw response
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText.trim()); // Parse the JSON response
+                    if (response.username && response.comment) {
+                        // Append the new comment with the username to the comments section
+                        const newComment = document.createElement('div');
+                        newComment.classList.add('comment');
+                        newComment.innerHTML = `${response.username}: ${response.comment}`;
+
+                        const commentsSection = document.getElementById('commentsSection' + postId);
+                        commentsSection.appendChild(newComment);
+
+                        // Clear the input field
+                        commentInput.value = '';
+                    } else {
+                        console.error('Error adding comment');
+                    }
+                } catch (e) {
+                    console.error('Error parsing JSON response:', e);
+                }
+            } else {
+                console.error('Error adding comment');
+            }
+            };
+
+        xhr.send('postID=' + postId + '&comment=' + encodeURIComponent(commentText));
+    });
+});
+
+
+
+
 </script>
+
 
 </body>
 </html>

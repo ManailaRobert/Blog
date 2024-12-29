@@ -9,12 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "username"=>$_POST['username'],
         "password"=>$_POST['password']
     ];
-    $role = performLogIn($credentials);
+    $dataReceived = performLogIn($credentials);
     // Verify credentials
-    if ($role !== null) {
+    if ($dataReceived !== null) {
         $_SESSION['logged_in'] = true;
-        $_SESSION['username'] = $username;
-        $_SESSION['role'] = $role;
+        $_SESSION['username'] = $_POST['username'];
+        $_SESSION['role'] = $dataReceived["role"];
+        $_SESSION['accountID'] = $dataReceived["accountID"];
         header("Location: index.php"); // Redirect to the homepage
         exit;
     } else {

@@ -3,7 +3,7 @@ nav form input {
     height: 1.5rem;
     background-color: rgb(218, 216, 214);
 }
-form button{
+button{
     height: 1.55rem;
     min-width: 25px;
     max-width: 200px;
@@ -55,6 +55,9 @@ li{
     display: none; /* Initially hidden */
     margin-top: 10px;
     max-width: 95%;
+    display: flex;
+    flex-direction: column; /* Stack comments vertically */
+    gap: 5px; /* Add a 5px gap between comments */
 }
 
 .comment {
@@ -62,6 +65,9 @@ li{
     padding: 5px;
     background-color: #f0f0f0;
     margin-bottom: 5px;
+    min-width: fit-content;
+    max-width: 100%;
+    border-radius: 10px;
 }
 
 .showCommentsBTN:hover {
@@ -72,4 +78,10 @@ li{
     display: flex;
     flex-direction: row;
     gap: 10px;
+}
+
+.postCommentsSection {
+    display: none;
+    flex-direction: column;
+    row-gap: 5px;
 }

@@ -74,7 +74,6 @@ function getPostsByCategories($sentData){
     
     return $posts;
 }
-
 function getPostsByTitle($title){
         global $conn;
         $posts = [];
@@ -99,9 +98,38 @@ function getPostsByTitle($title){
     return $posts;
 }
 
+function getCommentsForPost($postID){
+    global $conn;
+        $sql = "SELECT accounts.username, postcomments.comment from postcomments JOIN accounts ON postcomments.accountID = accounts.accountID where postID = ? ";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $postID);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $comments = [];
+        while ($row = mysqli_fetch_assoc($result)){
+            $comment = [
+                "username" => $row["username"],
+                "comment" => $row["comment"]
+            ];
+            $comments[] = $comment;
+        }
+        return $comments;
+    }
+function addComment($userId,$postId,$comment){
+    global $conn;
+    $sql = "INSERT INTO postcomments (postID, accountID, comment) VALUES (?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "iis", $postId,$userId,  $comment);
+    // Execute the statement
+    if (mysqli_stmt_execute($stmt)) {
+        return true; 
+    } else {
+        return false; 
+    }
+}
 function performLogIn($credentials){
     global $conn;
-        $sql = "SELECT password, role from accounts where username = ?";
+        $sql = "SELECT accountID, password, role from accounts where username = ?";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "s", $credentials["username"]);
         mysqli_stmt_execute($stmt);
@@ -109,11 +137,19 @@ function performLogIn($credentials){
         $data = mysqli_fetch_assoc($result);
     
         if($data["password"] == $credentials["password"])
-            return $data["role"];
+        {
+            $dataGiven = [
+                "role" =>  $data['role'],
+                "accountID" =>  $data['accountID'],
+            ];
+            return $dataGiven;
+        }
+
         else
             return null;
+   
         }
-        function performSignUp($credentials){
+function performSignUp($credentials){
             global $conn;
             if($credentials["reTypePassword"] != $credentials["password"]) return null;
     
