@@ -1,0 +1,22 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    color: hsla(126, 100%, 12%, 1);
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(230, 229, 229);
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    height: 100vh; 
+    box-sizing: border-box;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
