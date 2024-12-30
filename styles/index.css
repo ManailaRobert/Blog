@@ -8,10 +8,13 @@ button{
     min-width: 25px;
     max-width: 200px;
     background-color: rgb(245, 245, 245);
+    border: 1px solid ;
+    padding: 1px 5px 1px 5px;
 }
-.rightSideMain{
-    gap:20px;
+button:hover{
+    background-color: rgba(184, 184, 184, 0.671);
 }
+
 .leftSideMain form{
     display: flex;
     flex-direction: column;
@@ -23,12 +26,19 @@ button{
     border: 2px solid black;
     width: 100%;
     padding: 5px;
+    box-sizing: border-box;
+}
+
+.category_BoxAlignedCenter{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap:5px
 }
 .leftSideMain button{
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 250px;
     justify-content: center;
 }
 li{
@@ -51,13 +61,15 @@ li{
     padding: 5px;
 }
 
+
+
 .commentsSection {
     display: none; /* Initially hidden */
     margin-top: 10px;
     max-width: 95%;
     display: flex;
-    flex-direction: column; /* Stack comments vertically */
-    gap: 5px; /* Add a 5px gap between comments */
+    flex-direction: column;
+    gap: 5px; 
 }
 
 .comment {
@@ -68,10 +80,6 @@ li{
     min-width: fit-content;
     max-width: 100%;
     border-radius: 10px;
-}
-
-.showCommentsBTN:hover {
-    background-color: #f6f8f6;
 }
 
 .postSubsection {
@@ -85,3 +93,5 @@ li{
     flex-direction: column;
     row-gap: 5px;
 }
+
+

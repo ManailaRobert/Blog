@@ -1,7 +1,7 @@
 <?php 
 session_start();
 require "logInChecker.php";
-require "db.php";
+require_once "db.php";
 
 
 if(isset($_POST["search"])){
@@ -24,7 +24,7 @@ $categories = getCategories();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main</title>
     <link rel="stylesheet" href="/styles/background.css">
-    <link rel="stylesheet" href="./styles/layout.css">  
+    <link rel="stylesheet" href="/styles/layout.css">  
     <link rel="stylesheet" href="/styles/index.css">
 </head>
 <body>
@@ -37,6 +37,9 @@ $categories = getCategories();
         <input name="search" type="text" id= "search">
         <button type="submit">></button>
     </form>
+    <form action="createPost.php">
+        <Button type="submit">Add Posts</Button>
+    </form>
     </div>
     
     <div class="rightButtons">
@@ -48,32 +51,40 @@ $categories = getCategories();
 
 <div class="main">
 <div class = "leftSideMain">
-<form method="POST" action="index.php">
-    <div class="category_Box">
-        <h3>Post categories</h3>
-        <hr>
-        <li>
-            <input type="checkbox" name="categoryID[]" id="all" value="0"
-            <?php if (isset($_POST['categoryID']) && in_array(0, $_POST['categoryID'])): ?>
-                checked
-            <?php endif; ?>
-            >
-            <label for="all">All</label>
-        </li>
-    <?php foreach($categories as $category): ?>
-        <li>
-            <input type="checkbox" name="categoryID[]" id="<?= $category['categoryName']?>" value="<?= $category['categoryID']?>"
-            <?php if (isset($_POST['categoryID']) && in_array($category['categoryID'], $_POST['categoryID']) && !in_array(0, $_POST['categoryID'])): ?>
-                checked
-            <?php endif; ?>
-            >
-            <label for="<?= $category['categoryName']?>"><?= $category['categoryName']?></label>
-        </li>
-    <?php endforeach; ?>
-    </div>
-    <button type="submit">Search Category</button>
-</form>
-
+    <form method="POST" action="index.php">
+        <div class="category_Box">
+            <h3>Post categories</h3>
+            <hr>
+            <li>
+                <input type="checkbox" name="categoryID[]" id="all" value="0"
+                <?php if (isset($_POST['categoryID']) && in_array(0, $_POST['categoryID'])): ?>
+                    checked
+                <?php endif; ?>
+                >
+                <label for="all">All</label>
+            </li>
+        <?php foreach($categories as $category): ?>
+            <li>
+                <input type="checkbox" name="categoryID[]" id="<?= $category['categoryName']?>" value="<?= $category['categoryID']?>"
+                <?php if (isset($_POST['categoryID']) && in_array($category['categoryID'], $_POST['categoryID']) && !in_array(0, $_POST['categoryID'])): ?>
+                    checked
+                <?php endif; ?>
+                >
+                <label for="<?= $category['categoryName']?>"><?= $category['categoryName']?></label>
+            </li>
+        <?php endforeach; ?>
+        </div>
+        <button type="submit">Search Category</button>
+    </form>
+    <?php if($_SESSION["role"]== "admin"):?>
+        <form  action="addCategory.php" method="POST">
+            <div class="category_Box category_BoxAlignedCenter">
+                <label for="categoryName">Category Name</label>
+                <input type="text" name="categoryName" required>
+                <button type="submit">Create Category</button>
+            </div>
+        </form>    
+    <?php endif;?>
 </div>
 
 
@@ -89,13 +100,13 @@ $categories = getCategories();
             <div class="postSubsection">
                 <button type="button" class="showCommentsBTN" post-id="<?= $post["postID"] ?>">Comments</button>
                 <?php if($_SESSION["role"] == "admin"): ?>
-                    <form method="POST" action="editPost.php">
+                    <form method="GET" action="editPost.php">
                         <input type="text" name="selectedPostforEdit" value='<?= $post["postID"] ?>' hidden>
-                        <button type="button" id="editPost">Edit</button>
+                        <button type="submit" id="editPost">Edit</button>
                     </form>
                     <form method="POST" action="deletePost.php">
-                        <input type="text" name="selectedPostforDelete" value='<?= $post["postID"] ?>' hidden>
-                        <button type="button" id="deletePost">Delete</button>
+                        <input type="int" name="selectedPostforDelete" value='<?= $post["postID"] ?>' hidden>
+                        <button type="submit" id="deletePost">Delete</button>
                     </form>
                 <?php endif; ?>
             </div>

@@ -51,6 +51,15 @@ function getCategories(){
     return $posts;
 }
 
+function addCateogry($categoryName){
+    global $conn;
+
+    $sql = "INSERT INTO categories(category_Name) values (?)";
+    $stmt = mysqli_prepare($conn,$sql);
+    mysqli_stmt_bind_param($stmt,'s',$categoryName);
+    mysqli_stmt_execute($stmt);
+}
+
 function getPostsByCategories($sentData){
     global $conn;
     $posts = [];
@@ -98,6 +107,50 @@ function getPostsByTitle($title){
     return $posts;
 }
 
+function getPostsByID($postID)    {
+    global $conn;
+    $posts = [];
+
+    $sql = "SELECT posts.postID, posts.title, posts.content ,categories.categoryID, categories.category_Name from posts join categories on posts.categoryID = categories.categoryID where postID = ? AND postStatus = 'activ'";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $postID);
+    mysqli_stmt_execute($stmt);
+    $entry = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    $post = [
+        'postID'=> $entry['postID'],
+        'title'=> $entry['title'],
+        'content'=> $entry['content'],
+        'categoryID'=> $entry['categoryID'],
+        'categoryName'=> $entry['category_Name'],
+    ];
+
+if(empty($post)) return null;
+
+return $post;
+}
+function updatePost($post){
+    global $conn;
+    $sql = "UPDATE posts SET title =?, content=?, categoryID=? where postID = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "ssii", $post['title'],$post['content'],$post['categoryID'],$post['postID']);
+    mysqli_stmt_execute($stmt);
+}
+
+function addPost($post){
+    global $conn;
+    $sql = "INSERT INTO posts(title,content,accountID,categoryID) VALUES (?,?,?,?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "ssii", $post['title'],$post['content'],$post['accountID'],$post['categoryID']);
+    mysqli_stmt_execute($stmt);
+}
+
+function deletePost($postIDToDelete){
+    global $conn;
+    $sql = "UPDATE posts SET postStatus='sters' where postID = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $postIDToDelete);
+    mysqli_stmt_execute($stmt);
+}
 function getCommentsForPost($postID){
     global $conn;
         $sql = "SELECT accounts.username, postcomments.comment from postcomments JOIN accounts ON postcomments.accountID = accounts.accountID where postID = ? ";

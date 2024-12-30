@@ -1,0 +1,29 @@
+.post {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    background-color: rgb(250, 250, 250);
+    width: 100%;
+    padding: 5px;
+    height: 100%;
+    box-sizing: border-box;
+}
+.postTitle{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+.postContent{
+    width: 100%;
+    resize: none;
+    height: 500px;
+    box-sizing: border-box;
+    padding: 5px;
+}
+button{
+    align-self: center;
+}
+select {
+ max-width: 200px;
+}
