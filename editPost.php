@@ -1,6 +1,8 @@
 <?php 
 session_start();
 require_once "db.php";
+require "logInChecker.php";
+
 if(isset($_GET['selectedPostforEdit'])){
     $postID = $_GET['selectedPostforEdit'];
     $post = getPostsByID($postID);

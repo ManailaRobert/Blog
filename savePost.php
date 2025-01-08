@@ -1,5 +1,6 @@
 <?php 
 session_start();
+require "logInChecker.php";
 require_once "db.php";
 
 if(isset($_POST['postID'])){

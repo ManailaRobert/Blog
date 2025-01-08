@@ -2,6 +2,8 @@
 
 session_start();
 require_once "db.php";
+require "logInChecker.php";
+
 
 if (isset($_POST['postID']) && isset($_POST['comment'])) {
     $postId = $_POST['postID'];
