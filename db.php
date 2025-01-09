@@ -153,7 +153,7 @@ function deletePost($postIDToDelete){
 }
 function getCommentsForPost($postID){
     global $conn;
-        $sql = "SELECT accounts.username, postcomments.comment from postcomments JOIN accounts ON postcomments.accountID = accounts.accountID where postID = ? ";
+        $sql = "SELECT accounts.username, postcomments.comment, accounts.accountID from postcomments JOIN accounts ON postcomments.accountID = accounts.accountID where postID = ? ";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "i", $postID);
         mysqli_stmt_execute($stmt);
@@ -162,7 +162,8 @@ function getCommentsForPost($postID){
         while ($row = mysqli_fetch_assoc($result)){
             $comment = [
                 "username" => $row["username"],
-                "comment" => $row["comment"]
+                "comment" => $row["comment"],
+                "accountID" => $row["accountID"]
             ];
             $comments[] = $comment;
         }
@@ -189,7 +190,7 @@ function performLogIn($credentials){
         $result = mysqli_stmt_get_result($stmt);
         $data = mysqli_fetch_assoc($result);
     
-        if($data["password"] == $credentials["password"])
+        if(password_verify($credentials["password"],$data["password"]))
         {
             $dataGiven = [
                 "role" =>  $data['role'],
@@ -197,10 +198,8 @@ function performLogIn($credentials){
             ];
             return $dataGiven;
         }
-
         else
             return null;
-   
         }
 function performSignUp($credentials){
             global $conn;
@@ -216,10 +215,34 @@ function performSignUp($credentials){
                 return 1;
             
             $sql = "INSERT INTO accounts (username,password) VALUES (?,?)";
+            $passwordHash = password_hash($credentials["password"],PASSWORD_DEFAULT);
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, "ss", $credentials["username"],$credentials["password"]);
+            mysqli_stmt_bind_param($stmt, "ss", $credentials["username"],$passwordHash);
             mysqli_stmt_execute($stmt);
     
             return 2;
+        }
+
+        function addProfileToDB($accountId,$blob,$fileType){
+            global $conn;
+            $sql = "UPDATE accounts SET profileImage = ?, imageType = ? where accountID = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "bsi", $blob,$fileType, $accountId);
+            mysqli_stmt_send_long_data($stmt, 0, $blob);
+            mysqli_stmt_execute($stmt);
+        }
+
+        function getProfileImage($accountId){
+            global $conn;
+            $sql = "SELECT profileImage, imageType from accounts where accountID = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $accountId);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+            $data =[
+                "imageType"=> $result['imageType'],
+                'profileImage'=> $result['profileImage']
+            ];
+            return $data;
         }
 ?>

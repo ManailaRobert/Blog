@@ -43,12 +43,11 @@ $categories = getCategories();
     </div>
     
     <div class="rightButtons">
-        <form action="logout.php">
-        <Button type="submit">LogOut</Button>
-        </form>
-
         <form action="addProfileIMG.php">
             <Button type="submit">Profile Image</Button>
+        </form>
+        <form action="logout.php">
+        <Button type="submit">LogOut</Button>
         </form>
     </div>
 </nav>
@@ -189,7 +188,10 @@ document.querySelectorAll('.addComment').forEach(button => {
                         // Append the new comment with the username to the comments section
                         const newComment = document.createElement('div');
                         newComment.classList.add('comment');
-                        newComment.innerHTML = `${response.username}: ${response.comment}`;
+                        newComment.innerHTML = `
+                        <img src="displayImage.php" alt="Profile Image"> 
+                        ${response.username}: ${response.comment}
+                        `;
 
                         const commentsSection = document.getElementById('commentsSection' + postId);
                         commentsSection.appendChild(newComment);

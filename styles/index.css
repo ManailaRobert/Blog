@@ -73,6 +73,7 @@ li{
 }
 
 .comment {
+    display: flex;
     border: 2px solid black;
     padding: 5px;
     background-color: #f0f0f0;
@@ -80,6 +81,8 @@ li{
     min-width: fit-content;
     max-width: 100%;
     border-radius: 10px;
+    align-items: center;
+    column-gap: 4px;
 }
 
 .postSubsection {
@@ -95,3 +98,9 @@ li{
 }
 
 
+img{
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    border: 1px solid black ;
+}
