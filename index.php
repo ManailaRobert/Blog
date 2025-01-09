@@ -46,6 +46,10 @@ $categories = getCategories();
         <form action="logout.php">
         <Button type="submit">LogOut</Button>
         </form>
+
+        <form action="addProfileIMG.php">
+            <Button type="submit">Profile Image</Button>
+        </form>
     </div>
 </nav>
 
@@ -158,25 +162,6 @@ document.querySelectorAll('.showCommentsBTN').forEach(button => {
         xhr.send('postID=' + postId);
         postCommentsSection.style.display = 'flex';
 
-        // // If comments are not loaded yet, fetch them
-        // if (commentsSection.innerHTML.trim() === '') {
-        //     const xhr = new XMLHttpRequest();
-        //     xhr.open('POST', 'fetchComments.php', true);
-        //     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        //     xhr.onload = function () {
-        //         if (xhr.status === 200) {
-        //             commentsSection.innerHTML = xhr.responseText;
-        //             // After loading comments, show the postCommentsSection
-        //             postCommentsSection.style.display = 'flex';
-        //         } else {
-        //             console.error('Error loading comments');
-        //         }
-        //     };
-        //     xhr.send('postID=' + postId);
-        // } else {
-        //     // If comments are already loaded, just toggle the visibility
-        //     postCommentsSection.style.display = 'flex';
-        // }
     });
 });
 
