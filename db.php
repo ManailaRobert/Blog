@@ -17,7 +17,7 @@ if (!$conn) {
 function getPosts(){
     global $conn;
 
-    $sql = "SELECT postID, title, content from posts where postStatus = 'activ' ORDER BY datePosted DESC";
+    $sql = "SELECT postID, title, content, accountID from posts where postStatus = 'activ' ORDER BY datePosted DESC";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -26,6 +26,7 @@ function getPosts(){
             'postID'=> $row['postID'],
             'title'=> $row['title'],
             'content'=> $row['content'],
+            'accountID' => $row['accountID']
         ];
         $posts[] = $post;
     }
@@ -66,7 +67,7 @@ function getPostsByCategories($sentData){
     foreach($sentData as $categoryID){
         if($categoryID == 0) return getPosts();
 
-        $sql = "SELECT postID, title, content from posts where categoryID = ? AND postStatus = 'activ' ORDER BY datePosted DESC";
+        $sql = "SELECT postID, title, content, accountID from posts where categoryID = ? AND postStatus = 'activ' ORDER BY datePosted DESC";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "i", $categoryID);
         mysqli_stmt_execute($stmt);
@@ -75,7 +76,8 @@ function getPostsByCategories($sentData){
             $post = [
                 'postID'=> $row['postID'],
                 'title'=> $row['title'],
-                'content'=> $row['content']
+                'content'=> $row['content'],
+                'accountID' => $row['accountID']
             ];
             $posts[] = $post;
         }
@@ -87,7 +89,7 @@ function getPostsByTitle($title){
         global $conn;
         $posts = [];
 
-        $sql = "SELECT postID, title, content from posts where title LIKE ? AND postStatus = 'activ'";
+        $sql = "SELECT postID, title, content, accountID from posts where title LIKE ? AND postStatus = 'activ'";
         $stmt = mysqli_prepare($conn, $sql);
         $title = "%".$title."%";
         mysqli_stmt_bind_param($stmt, "s", $title);
@@ -98,7 +100,8 @@ function getPostsByTitle($title){
             $post = [
                 'postID'=> $row['postID'],
                 'title'=> $row['title'],
-                'content'=> $row['content']
+                'content'=> $row['content'],
+                'accountID' => $row['accountID']
             ];
             $posts[] = $post;
         }
@@ -111,7 +114,7 @@ function getPostsByID($postID)    {
     global $conn;
     $posts = [];
 
-    $sql = "SELECT posts.postID, posts.title, posts.content ,categories.categoryID, categories.category_Name from posts join categories on posts.categoryID = categories.categoryID where postID = ? AND postStatus = 'activ'";
+    $sql = "SELECT posts.postID, posts.title, posts.content, posts.accountID ,categories.categoryID, categories.category_Name from posts join categories on posts.categoryID = categories.categoryID where postID = ? AND postStatus = 'activ'";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "i", $postID);
     mysqli_stmt_execute($stmt);
@@ -122,6 +125,7 @@ function getPostsByID($postID)    {
         'content'=> $entry['content'],
         'categoryID'=> $entry['categoryID'],
         'categoryName'=> $entry['category_Name'],
+        'accountID' => $entry['accountID']
     ];
 
 if(empty($post)) return null;

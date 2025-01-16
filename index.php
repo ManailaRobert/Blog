@@ -102,7 +102,7 @@ $categories = getCategories();
 
             <div class="postSubsection">
                 <button type="button" class="showCommentsBTN" post-id="<?= $post["postID"] ?>">Comments</button>
-                <?php if($_SESSION["role"] == "admin"): ?>
+                <?php if($_SESSION["role"] == "admin" || $post["accountID"] == $_SESSION["accountID"]): ?>
                     <form method="GET" action="editPost.php">
                         <input type="text" name="selectedPostforEdit" value='<?= $post["postID"] ?>' hidden>
                         <button type="submit" id="editPost">Edit</button>
