@@ -1,7 +1,7 @@
 # Blog PHP Project
 
 Functionalitati:
-- Log IN.
+- Log In.
 - Log Out.
 - Create Post by every user.
 - Add comment to posts.
